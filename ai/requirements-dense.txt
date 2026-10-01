@@ -1,0 +1,8 @@
+# Optional: semantic (FAISS) retrieval. Without these the chatbot uses its offline TF-IDF retriever.
+langchain-community>=0.2
+langchain-text-splitters>=0.2
+langchain-huggingface>=0.0.3
+sentence-transformers>=2.7
+faiss-cpu>=1.8
+# Optional: LLM answers + self-argument critic (needs OPENAI_API_KEY)
+langchain-openai>=0.1

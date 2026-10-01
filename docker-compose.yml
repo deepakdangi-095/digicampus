@@ -1,0 +1,63 @@
+# One command brings up the whole platform:  docker compose up --build
+#   web console  http://localhost:3000     API  http://localhost:4000     AI engine  http://localhost:8000 (internal)
+name: digicampus
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: digicampus
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-digicampus}
+      POSTGRES_DB: digicampus
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U digicampus"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  ai:
+    build:
+      context: ./ai
+      args: { DENSE: "${AI_DENSE:-0}" }
+    restart: unless-stopped
+    environment:
+      SERVICE_API_KEY: ${AI_SERVICE_API_KEY:-dev-ai-key-change-me}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8000/health')"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    depends_on:
+      db: { condition: service_healthy }
+      ai: { condition: service_healthy }
+    environment:
+      DATABASE_URL: postgresql://digicampus:${POSTGRES_PASSWORD:-digicampus}@db:5432/digicampus?schema=public
+      NODE_ENV: production
+      JWT_SECRET: ${JWT_SECRET:-demo-jwt-secret-change-before-going-live}
+      CAMPUS_PASS_SECRET: ${CAMPUS_PASS_SECRET:-demo-pass-secret-change-before-going-live}
+      GATE_API_KEY: ${GATE_API_KEY:-demo-gate-key}
+      PYTHON_AI_SERVICE_URL: http://ai:8000
+      AI_SERVICE_API_KEY: ${AI_SERVICE_API_KEY:-dev-ai-key-change-me}
+      CORS_ORIGINS: ${CORS_ORIGINS:-*}
+      SEED_ON_START: ${SEED_ON_START:-1}        # loads demo users/data on first boot only; set 0 for a real deployment
+    ports: ["4000:4000"]
+    volumes: [uploads:/app/uploads]
+
+  web:
+    build:
+      context: ./web
+      args: { NEXT_PUBLIC_API_URL: "${PUBLIC_API_URL:-http://localhost:4000}" }
+    restart: unless-stopped
+    depends_on: [backend]
+    ports: ["3000:3000"]
+
+volumes:
+  pgdata:
+  uploads:

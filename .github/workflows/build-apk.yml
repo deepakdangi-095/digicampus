@@ -1,0 +1,43 @@
+name: Build Android APK
+on:
+  workflow_dispatch:
+    inputs:
+      api_url:
+        description: 'Backend URL baked into the app (e.g. https://api.your-college.edu)'
+        required: true
+  push:
+    branches: [main]
+    paths: ['mobile/**']
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: mobile
+    env:
+      # Set a repository variable API_URL for push builds; manual runs use the input.
+      EXPO_PUBLIC_API_URL: ${{ inputs.api_url || vars.API_URL || 'http://10.0.2.2:4000' }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 22 }
+      - uses: actions/setup-java@v4
+        with: { distribution: temurin, java-version: 17 }
+      - name: Install JS dependencies and align native modules with the Expo SDK
+        run: |
+          npm install
+          npx expo install --fix
+      - name: Generate the native Android project
+        run: npx expo prebuild --platform android --clean
+      - name: Assemble release APK (signed with the debug key so it installs directly)
+        working-directory: mobile/android
+        run: |
+          chmod +x gradlew
+          ./gradlew assembleRelease --no-daemon --console=plain
+      - uses: actions/upload-artifact@v4
+        with:
+          name: DigiCampus-apk
+          path: mobile/android/app/build/outputs/apk/release/*.apk
+          if-no-files-found: error

@@ -1,0 +1,58 @@
+<!doctype html><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Digi Campus Assistant</title>
+<style>
+body{font:15px system-ui,sans-serif;max-width:720px;margin:0 auto;padding:12px;display:flex;flex-direction:column;height:100vh;box-sizing:border-box}
+#log{flex:1;overflow:auto}.m{margin:8px 0;padding:8px 12px;border-radius:12px;white-space:pre-wrap;max-width:88%}
+.u{background:#dbeafe;margin-left:auto}.a{background:#f1f5f9}small{color:#64748b;display:block;margin-top:6px;font-size:12px}
+form{display:flex;gap:8px}input{flex:1;padding:10px;border:1px solid #cbd5e1;border-radius:8px}button{padding:10px 16px}
+.chip{cursor:pointer;border:1px solid #cbd5e1;border-radius:999px;padding:2px 10px;margin:2px 2px 0 0;display:inline-block;font-size:12px}
+.card{background:#fff;border:1px solid #e2e8f0;border-radius:10px;padding:8px 10px;margin-top:8px;font-size:13px;white-space:normal}
+.card b{display:block;margin-bottom:2px}.mot{background:#ecfdf5;border-color:#a7f3d0}a{color:#2563eb}
+</style>
+<h3>Digi Campus Assistant</h3><div id="log"></div>
+<form id="f"><input id="q" placeholder="Ask about rules, events, resources, or tell me how you're feeling..." autocomplete="off"><button>Send</button></form>
+<script>
+let sid = null; const log = document.getElementById('log'), q = document.getElementById('q');
+const key = new URLSearchParams(location.search).get('key');
+const el = (t, c, txt) => { const e = document.createElement(t); if (c) e.className = c; if (txt) e.textContent = txt; return e };
+function add(cls, text){const d=el('div','m '+cls,text);log.append(d);log.scrollTop=log.scrollHeight;return d}
+function linkify(node, text){ // safe: text nodes + anchors only for http(s) URLs
+  node.textContent=''; text = text.replace(/\*\*/g,'');
+  text.split(/(https?:\/\/[^\s)]+)/).forEach(p=>{ if(/^https?:\/\//.test(p)){const a=el('a','',p);a.href=p;a.target='_blank';a.rel='noopener noreferrer';node.append(a)} else node.append(document.createTextNode(p)) });
+}
+function card(title, lines, cls){const c=el('div','card '+(cls||'')); c.append(el('b','',title)); lines.forEach(l=>{const d=el('div'); l.forEach(p=>d.append(p)); c.append(d)}); return c}
+function link(t,u){const a=el('a','',t); if(/^https?:\/\//.test(u||'')){a.href=u;a.target='_blank';a.rel='noopener noreferrer'} return a}
+function renderCoaching(box, c, mode){
+  if(!c) return;
+  if(c.motivation && mode!=='guidance') box.append(card('Keep going', [[c.motivation]], 'mot'));
+  if(c.next_steps.length && mode!=='guidance') box.append(card('Next steps', c.next_steps.map(s=>['\u2022 '+s])));
+  if(mode!=='guidance' && c.events.length) box.append(card('Get involved', c.events.map(e=>[el('span','',e.name+': '+e.how_to_join+' '), ...(e.url?[link('Open site',e.url)]:[])])));
+  if(c.resources.length) box.append(card('Useful links', c.resources.map(r=>[link(r.title,r.url), document.createTextNode(' \u2013 '+r.why)])));
+}
+async function ask(text){
+  add('u', text); const bubble = add('a', ''); const meta = el('small');
+  const res = await fetch('/ai/chat/stream', {method:'POST', headers:{'Content-Type':'application/json', ...(key?{'X-API-Key':key}:{})},
+    body: JSON.stringify({query:text, session_id:sid})});
+  if(!res.ok){bubble.textContent='Error '+res.status;return}
+  const reader = res.body.getReader(), dec = new TextDecoder(); let buf = '';
+  while(true){
+    const {value, done} = await reader.read(); if(done) break; buf += dec.decode(value, {stream:true});
+    let i; while((i = buf.indexOf('\n\n')) >= 0){
+      const block = buf.slice(0,i); buf = buf.slice(i+2);
+      const ev = /event: (\w+)/.exec(block)[1], data = JSON.parse(/data: (.*)/s.exec(block)[1]);
+      if(ev==='meta') sid = data.session_id;
+      if(ev==='token'){ bubble.textContent += data.text.replace(/\*\*/g,''); log.scrollTop=log.scrollHeight }
+      if(ev==='done'){
+        linkify(bubble, data.answer);
+        const sc = data.self_check; const src = data.sources.map(s=>s.source).slice(0,2).join(' | ');
+        meta.textContent = [sc?`self-check: ${sc.verdict} (${Math.round(sc.supported_ratio*100)}%)`:'', src].filter(Boolean).join('  \u2022  ');
+        if(meta.textContent) bubble.append(meta);
+        renderCoaching(bubble, data.coaching, data.mode);
+        const box = el('div'); data.suggested_questions.forEach(s=>{const c=el('span','chip',s);c.onclick=()=>ask(s);box.append(c)}); bubble.append(box);
+        log.scrollTop=log.scrollHeight;
+      }
+    }
+  }
+}
+document.getElementById('f').onsubmit = e => {e.preventDefault(); const t=q.value.trim(); if(t){q.value=''; ask(t)}};
+add('a','Hi! I can answer campus-rule questions, suggest events to join, point you to free learning resources, and help when motivation is low.');
+</script>

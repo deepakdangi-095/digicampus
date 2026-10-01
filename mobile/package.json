@@ -1,0 +1,36 @@
+{
+  "name": "digicampus-mobile",
+  "version": "1.0.0",
+  "private": true,
+  "main": "index.ts",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo run:android",
+    "setup": "expo install --fix",
+    "typecheck": "tsc --noEmit",
+    "prebuild:android": "expo prebuild --platform android --clean",
+    "build:apk": "eas build --platform android --profile preview",
+    "build:apk:local": "expo prebuild --platform android --clean && cd android && ./gradlew assembleRelease"
+  },
+  "dependencies": {
+    "@expo-google-fonts/dm-sans": "*",
+    "@expo-google-fonts/sora": "*",
+    "expo": "~56.0.0",
+    "expo-build-properties": "*",
+    "expo-document-picker": "*",
+    "expo-font": "*",
+    "expo-secure-store": "*",
+    "expo-speech": "*",
+    "expo-status-bar": "*",
+    "lucide-react-native": "^0.469.0",
+    "react": "~19.2.0",
+    "react-native": "~0.85.0",
+    "react-native-qrcode-svg": "*",
+    "react-native-safe-area-context": "*",
+    "react-native-svg": "*"
+  },
+  "devDependencies": {
+    "@types/react": "*",
+    "typescript": "*"
+  }
+}

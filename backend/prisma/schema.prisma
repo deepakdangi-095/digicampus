@@ -1,0 +1,310 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  STUDENT
+  PARENT
+  FACULTY
+  HOD
+  DEAN
+  ADMIN
+}
+
+enum ApplicationType {
+  LEAVE
+  BONAFIDE
+  HOSTEL_CHANGE
+  CERTIFICATE
+}
+
+enum ApplicationStatus {
+  PENDING
+  IN_PROGRESS
+  APPROVED
+  REJECTED
+}
+
+enum StageAction {
+  APPROVED
+  REJECTED
+  ESCALATED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+}
+
+enum VaultStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+enum AnnouncementType {
+  GENERAL
+  HACKATHON
+  WORKSHOP
+  PLACEMENT
+}
+
+enum AssessmentKind {
+  MIDTERM
+  ASSIGNMENT
+  QUIZ
+}
+
+enum FeeStatus {
+  DUE
+  PAID
+}
+
+enum AppointmentMode {
+  ONLINE
+  IN_PERSON
+}
+
+enum AppointmentStatus {
+  REQUESTED
+  CONFIRMED
+  DECLINED
+}
+
+enum NotificationKind {
+  ATTENDANCE
+  FEE
+  APPLICATION
+  APPOINTMENT
+  GENERAL
+}
+
+enum GateKind {
+  GATE
+  LIBRARY
+  CAFETERIA
+  EXAM_HALL
+}
+
+model Department {
+  id    String @id @default(cuid())
+  name  String @unique
+  users User[]
+}
+
+model User {
+  id           String      @id @default(cuid())
+  email        String      @unique
+  passwordHash String
+  name         String
+  role         Role
+  branch       String?
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  createdAt    DateTime    @default(now())
+
+  studentProfile        StudentProfile?       @relation("ProfileOwner")
+  childProfiles         StudentProfile[]      @relation("ParentOf")
+  applicationsSubmitted Application[]         @relation("SubmittedBy")
+  stageActionsTaken     ApplicationStageLog[] @relation("ApprovedBy")
+  attendanceAsStudent   AttendanceRecord[]    @relation("StudentAttendance")
+  attendanceMarkedBy    AttendanceRecord[]    @relation("MarkedBy")
+  vaultUploads          VaultResource[]       @relation("UploadedBy")
+  subjectsTaught        Subject[]
+  assessments           Assessment[]
+  fees                  Fee[]
+  appointmentsAsParent  Appointment[]         @relation("ApptParent")
+  appointmentsWithStaff Appointment[]         @relation("ApptStaff")
+  appointmentsAboutMe   Appointment[]         @relation("ApptStudent")
+  notifications         Notification[]
+  gateEvents            GateEvent[]
+
+  @@index([role, branch])
+}
+
+model StudentProfile {
+  id              String   @id @default(cuid())
+  userId          String   @unique
+  user            User     @relation("ProfileOwner", fields: [userId], references: [id], onDelete: Cascade)
+  parentId        String?
+  parent          User?    @relation("ParentOf", fields: [parentId], references: [id])
+  parentEmail     String?
+  parentPhone     String?
+  semester        Int      @default(1)
+  cgpa            Float?
+  activeBacklogs  Int      @default(0)
+  atsScore        Float?
+  projectsCount   Int      @default(0)
+  internshipsCount Int     @default(0)
+  targetRole      String?
+  skills          String[] @default([])
+  weakSkills      String[] @default([])
+  interests       String[] @default([])
+  hostelRoom      String?
+  busRoute        String?
+
+  @@index([parentId])
+}
+
+model Subject {
+  id         String @id @default(cuid())
+  name       String
+  branch     String
+  semester   Int
+  facultyId  String
+  faculty    User   @relation(fields: [facultyId], references: [id])
+
+  @@unique([name, branch, semester])
+  @@index([facultyId])
+}
+
+model Application {
+  id             String                @id @default(cuid())
+  type           ApplicationType
+  status         ApplicationStatus     @default(PENDING)
+  currentStage   Int                   @default(0)
+  reason         String
+  urgent         Boolean               @default(false)
+  stageEnteredAt DateTime              @default(now())
+  submittedById  String
+  submittedBy    User                  @relation("SubmittedBy", fields: [submittedById], references: [id])
+  stageLogs      ApplicationStageLog[]
+  createdAt      DateTime              @default(now())
+  updatedAt      DateTime              @updatedAt
+
+  @@index([status, stageEnteredAt])
+  @@index([submittedById])
+}
+
+model ApplicationStageLog {
+  id            String       @id @default(cuid())
+  applicationId String
+  application   Application  @relation(fields: [applicationId], references: [id], onDelete: Cascade)
+  stageIndex    Int
+  stageRole     Role
+  action        StageAction?
+  approverId    String?
+  approver      User?        @relation("ApprovedBy", fields: [approverId], references: [id])
+  comment       String?
+  actedAt       DateTime?
+
+  @@unique([applicationId, stageIndex])
+}
+
+model AttendanceRecord {
+  id         String           @id @default(cuid())
+  studentId  String
+  student    User             @relation("StudentAttendance", fields: [studentId], references: [id], onDelete: Cascade)
+  subject    String
+  date       DateTime         @db.Date
+  status     AttendanceStatus
+  markedById String
+  markedBy   User             @relation("MarkedBy", fields: [markedById], references: [id])
+  createdAt  DateTime         @default(now())
+
+  @@unique([studentId, subject, date])
+  @@index([studentId, subject])
+  @@index([date])
+}
+
+model Assessment {
+  id          String         @id @default(cuid())
+  studentId   String
+  student     User           @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  subject     String
+  topic       String?
+  kind        AssessmentKind
+  score       Float?
+  maxScore    Float
+  dueDate     DateTime?
+  submittedAt DateTime?
+  createdAt   DateTime       @default(now())
+
+  @@index([studentId, kind])
+}
+
+model Fee {
+  id                 String    @id @default(cuid())
+  studentId          String
+  student            User      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  semester           Int
+  description        String
+  amount             Int
+  dueDate            DateTime
+  status             FeeStatus @default(DUE)
+  paidAt             DateTime?
+  receiptNo          String?   @unique
+  extensionRequested Boolean   @default(false)
+  extensionReason    String?
+
+  @@index([studentId, status])
+}
+
+model Appointment {
+  id        String            @id @default(cuid())
+  parentId  String
+  parent    User              @relation("ApptParent", fields: [parentId], references: [id])
+  staffId   String
+  staff     User              @relation("ApptStaff", fields: [staffId], references: [id])
+  studentId String
+  student   User              @relation("ApptStudent", fields: [studentId], references: [id])
+  slot      DateTime
+  mode      AppointmentMode
+  status    AppointmentStatus @default(REQUESTED)
+  note      String?
+  createdAt DateTime          @default(now())
+
+  @@index([parentId])
+  @@index([staffId, status])
+}
+
+model Notification {
+  id        String           @id @default(cuid())
+  userId    String
+  user      User             @relation(fields: [userId], references: [id], onDelete: Cascade)
+  kind      NotificationKind @default(GENERAL)
+  title     String
+  body      String
+  read      Boolean          @default(false)
+  createdAt DateTime         @default(now())
+
+  @@index([userId, read, createdAt])
+}
+
+model VaultResource {
+  id           String      @id @default(cuid())
+  title        String
+  subject      String
+  fileUrl      String
+  status       VaultStatus @default(PENDING)
+  uploadedById String
+  uploadedBy   User        @relation("UploadedBy", fields: [uploadedById], references: [id])
+  createdAt    DateTime    @default(now())
+
+  @@index([status, subject])
+}
+
+model Announcement {
+  id           String           @id @default(cuid())
+  title        String
+  body         String
+  type         AnnouncementType @default(GENERAL)
+  departmentId String?
+  createdAt    DateTime         @default(now())
+}
+
+model GateEvent {
+  id       String   @id @default(cuid())
+  userId   String
+  user     User     @relation(fields: [userId], references: [id])
+  kind     GateKind
+  location String?
+  at       DateTime @default(now())
+
+  @@index([userId, at])
+}

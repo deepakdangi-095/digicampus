@@ -1,0 +1,23 @@
+{
+  "expo": {
+    "name": "DigiCampus",
+    "slug": "digicampus",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "backgroundColor": "#101B3B",
+    "splash": { "image": "./assets/splash-icon.png", "resizeMode": "contain", "backgroundColor": "#101B3B" },
+    "android": {
+      "package": "com.digicampus.app",
+      "versionCode": 1,
+      "adaptiveIcon": { "foregroundImage": "./assets/adaptive-icon.png", "backgroundColor": "#101B3B" }
+    },
+    "ios": { "bundleIdentifier": "com.digicampus.app", "supportsTablet": true },
+    "plugins": [
+      "expo-secure-store",
+      "expo-font",
+      ["expo-build-properties", { "android": { "usesCleartextTraffic": true } }]
+    ]
+  }
+}

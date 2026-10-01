@@ -1,0 +1,20 @@
+[
+ {"id":"DBMS-01","subject":"DBMS","topic":"Normalization","question":"Explain 1NF, 2NF, 3NF and BCNF with suitable examples.","year":2023,"marks":10,"difficulty":"medium"},
+ {"id":"DBMS-02","subject":"DBMS","topic":"Normalization","question":"Given R(A,B,C,D) with FDs A->B, B->C, decompose into 3NF and check lossless join.","year":2022,"marks":8,"difficulty":"hard"},
+ {"id":"DBMS-03","subject":"DBMS","topic":"Transactions","question":"Explain ACID properties and conflict serializability with an example schedule.","year":2023,"marks":10,"difficulty":"medium"},
+ {"id":"DBMS-04","subject":"DBMS","topic":"SQL Joins","question":"Differentiate INNER, LEFT, RIGHT and FULL OUTER JOIN with queries.","year":2021,"marks":6,"difficulty":"easy"},
+ {"id":"DBMS-05","subject":"DBMS","topic":"Indexing","question":"Describe B+ tree indexing and its advantages over static hashing.","year":2022,"marks":8,"difficulty":"medium"},
+ {"id":"OS-01","subject":"Operating Systems","topic":"CPU Scheduling","question":"Compute average waiting time using FCFS, SJF and Round Robin (q=4) for the given process set.","year":2023,"marks":10,"difficulty":"medium"},
+ {"id":"OS-02","subject":"Operating Systems","topic":"Deadlocks","question":"State the four necessary conditions for deadlock and explain the Banker's algorithm.","year":2022,"marks":10,"difficulty":"hard"},
+ {"id":"OS-03","subject":"Operating Systems","topic":"Memory Management","question":"Explain paging and segmentation. Compare FIFO, LRU and Optimal page replacement.","year":2021,"marks":10,"difficulty":"medium"},
+ {"id":"OS-04","subject":"Operating Systems","topic":"Process Synchronization","question":"Solve the producer-consumer problem using semaphores.","year":2023,"marks":8,"difficulty":"medium"},
+ {"id":"DSA-01","subject":"Data Structures","topic":"Trees","question":"Construct an AVL tree by inserting 21,26,30,9,4,14,28,18 and show rotations.","year":2022,"marks":10,"difficulty":"hard"},
+ {"id":"DSA-02","subject":"Data Structures","topic":"Graphs","question":"Explain BFS and DFS with time complexity and write Dijkstra's algorithm.","year":2023,"marks":10,"difficulty":"medium"},
+ {"id":"DSA-03","subject":"Data Structures","topic":"Sorting","question":"Compare quick sort, merge sort and heap sort by time and space complexity.","year":2021,"marks":6,"difficulty":"easy"},
+ {"id":"DSA-04","subject":"Data Structures","topic":"Linked Lists","question":"Write an algorithm to reverse a singly linked list and detect a cycle.","year":2022,"marks":8,"difficulty":"medium"},
+ {"id":"CN-01","subject":"Computer Networks","topic":"TCP","question":"Explain TCP three-way handshake and congestion control mechanisms.","year":2023,"marks":10,"difficulty":"medium"},
+ {"id":"CN-02","subject":"Computer Networks","topic":"Subnetting","question":"Divide 192.168.10.0/24 into 4 equal subnets and list the ranges.","year":2022,"marks":8,"difficulty":"medium"},
+ {"id":"MATH-01","subject":"Engineering Mathematics","topic":"Laplace Transform","question":"Find the Laplace transform of t*sin(at) and solve y''+y=sin t, y(0)=0, y'(0)=0.","year":2022,"marks":10,"difficulty":"hard"},
+ {"id":"MATH-02","subject":"Engineering Mathematics","topic":"Matrices","question":"Find eigenvalues and eigenvectors of the given 3x3 matrix and verify Cayley-Hamilton theorem.","year":2023,"marks":10,"difficulty":"medium"},
+ {"id":"ML-01","subject":"Machine Learning","topic":"Bias Variance","question":"Explain the bias-variance trade-off and how regularization helps.","year":2023,"marks":8,"difficulty":"medium"}
+]

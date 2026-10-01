@@ -1,0 +1,23 @@
+[
+ {"title":"NPTEL","url":"https://nptel.ac.in/","tags":["learning","course","engineering","dbms","os","dsa","mathematics","exam","syllabus","networks"],"why":"Free video courses from the IITs and IISc, with optional certification exams."},
+ {"title":"SWAYAM","url":"https://swayam.gov.in/","tags":["learning","course","certificate","credits"],"why":"Government MOOC platform with free courses across streams."},
+ {"title":"MIT OpenCourseWare","url":"https://ocw.mit.edu/","tags":["learning","mathematics","algorithms","dsa","machine learning","physics"],"why":"Free lecture notes, problem sets and videos from MIT courses."},
+ {"title":"CS50 (Harvard)","url":"https://cs50.harvard.edu/","tags":["programming","learning","beginner","c","python","computer science"],"why":"A friendly, well-structured intro to computer science and programming."},
+ {"title":"freeCodeCamp","url":"https://www.freecodecamp.org/","tags":["web","javascript","html","css","python","data","learning","beginner"],"why":"Free hands-on curriculum with projects for web development and data."},
+ {"title":"MDN Web Docs","url":"https://developer.mozilla.org/","tags":["javascript","html","css","web","documentation"],"why":"The most reliable reference for web technologies."},
+ {"title":"GeeksforGeeks","url":"https://www.geeksforgeeks.org/","tags":["dsa","algorithms","interview","dbms","os","networks","placement","exam","practice"],"why":"Explanations and practice problems for core CS subjects and interview prep."},
+ {"title":"LeetCode","url":"https://leetcode.com/","tags":["dsa","coding","interview","placement","practice","algorithms"],"why":"Curated coding problems to build interview-ready problem solving."},
+ {"title":"HackerRank","url":"https://www.hackerrank.com/","tags":["coding","sql","interview","placement","practice","aptitude"],"why":"Practice tracks for languages, SQL and company-style coding tests."},
+ {"title":"Codeforces","url":"https://codeforces.com/","tags":["competitive coding","contest","algorithms","dsa"],"why":"Regular contests and a huge problem archive for competitive programming."},
+ {"title":"Kaggle Learn","url":"https://www.kaggle.com/learn","tags":["machine learning","python","pandas","data","sql","statistics"],"why":"Short, practical micro-courses in data science and ML."},
+ {"title":"roadmap.sh","url":"https://roadmap.sh/","tags":["career","roadmap","backend","frontend","devops","learning"],"why":"Step-by-step learning roadmaps for popular tech roles."},
+ {"title":"GitHub Skills","url":"https://skills.github.com/","tags":["git","github","open source","learning","beginner"],"why":"Interactive courses to learn Git and GitHub, ideal before open-source contributions."},
+ {"title":"AWS Skill Builder","url":"https://skillbuilder.aws/","tags":["cloud","aws","devops","learning"],"why":"Free cloud learning paths and labs."},
+ {"title":"Internshala","url":"https://internshala.com/","tags":["internship","career","jobs","resume"],"why":"Internships and fresher opportunities, with many remote options."},
+ {"title":"National Career Service (NCS)","url":"https://www.ncs.gov.in/","tags":["career","jobs","internship","government"],"why":"Government job portal with career resources and counselling."},
+ {"title":"Unstop","url":"https://unstop.com/","tags":["competition","hackathon","career","internship","quiz"],"why":"Find competitions, hackathons and internships for students."},
+ {"title":"Major League Hacking","url":"https://mlh.io/","tags":["hackathon","event","software","beginner"],"why":"Student hackathons and beginner-friendly build events."},
+ {"title":"DigiLocker","url":"https://www.digilocker.gov.in/","tags":["documents","certificates","marksheet","verification","career"],"why":"Keep verified certificates and marksheets handy for applications."},
+ {"title":"Khan Academy","url":"https://www.khanacademy.org/","tags":["mathematics","learning","basics","statistics","exam"],"why":"Clear, free lessons for strengthening maths fundamentals."},
+ {"title":"Tele-MANAS (mental health helpline)","url":"https://telemanas.mohfw.gov.in/","tags":["wellbeing","stress","anxiety","support"],"why":"Free 24x7 support by call on 14416 or 1-800-891-4416, in many languages."}
+]
